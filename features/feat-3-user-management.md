@@ -15,4 +15,4 @@
 
 ## Assumptions
 
-- 
+- Test are simplified to testing the services directly due to the lack of time. Ideally, controllers should be also tested.
