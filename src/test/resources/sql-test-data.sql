@@ -23,7 +23,11 @@ INSERT INTO scheduled_flights (flight_id, departure_date) VALUES ((SELECT id FRO
 -- KJFK EBBR
 INSERT INTO scheduled_flights (flight_id, departure_date) VALUES ((SELECT id FROM flights WHERE departure = 'KJFK' AND arrival = 'EBBR'), DATEADD('DAY', 3, CURRENT_DATE));
 
+-- Test user
+INSERT INTO users (username, password) VALUES ('test', '$2a$10$25FMNZLir77nSGmMYqudvu5Eirr4LFUykiylpH6.7wcUJkii2huU2');
+INSERT INTO users (username, password) VALUES ('test-2', '$2a$10$25FMNZLir77nSGmMYqudvu5Eirr4LFUykiylpH6.7wcUJkii2huU2');
+
 -- Existing bookings
-INSERT INTO bookings (seats, scheduled_flight_id) VALUES (120, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'LFMN') AND departure_date = DATEADD('DAY', 7, CURRENT_DATE)));
-INSERT INTO bookings (seats, scheduled_flight_id) VALUES (118, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'LFMN') AND departure_date = DATEADD('DAY', 8, CURRENT_DATE)));
-INSERT INTO bookings (seats, scheduled_flight_id) VALUES (189, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'KJFK') AND departure_date = DATEADD('DAY', 7, CURRENT_DATE)));
+INSERT INTO bookings (seats, scheduled_flight_id, user_id) VALUES (120, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'LFMN') AND departure_date = DATEADD('DAY', 7, CURRENT_DATE)), (SELECT id FROM users WHERE username = 'test'));
+INSERT INTO bookings (seats, scheduled_flight_id, user_id) VALUES (118, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'LFMN') AND departure_date = DATEADD('DAY', 8, CURRENT_DATE)), (SELECT id FROM users WHERE username = 'test'));
+INSERT INTO bookings (seats, scheduled_flight_id, user_id) VALUES (189, (SELECT id FROM scheduled_flights WHERE flight_id = (SELECT id FROM flights WHERE departure = 'EBBR' AND arrival = 'KJFK') AND departure_date = DATEADD('DAY', 7, CURRENT_DATE)), (SELECT id FROM users WHERE username = 'test-2'));

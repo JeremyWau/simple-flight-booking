@@ -25,4 +25,8 @@ public class Booking {
     @ManyToOne()
     @JoinColumn(name = "scheduled_flight_id", referencedColumnName = "id", nullable = false)
     private ScheduledFlight scheduledFlight;
+
+    @ManyToOne()
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private UserSimplified user;
 }

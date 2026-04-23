@@ -6,17 +6,12 @@ import com.demo.flightbooking.exceptions.MissingDateException;
 import com.demo.flightbooking.exceptions.MissingDepartureException;
 import com.demo.flightbooking.exceptions.PastDateException;
 import com.demo.flightbooking.services.FlightSearchService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,18 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql(scripts = "/sql-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class FlightSearchTest {
     @Autowired
     private FlightSearchService flightSearchService;
-
-    @BeforeAll
-    static void setup(@Autowired DataSource dataSource) {
-        try (Connection conn = dataSource.getConnection()) {
-            ScriptUtils.executeSqlScript(conn, new ClassPathResource("sql-test-data.sql"));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
     void searchServiceThrowsAnErrorMessageIfEmptyDeparture() {

@@ -5,16 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduledFlightDto {
+public class BookingDto {
     private Long id;
-    private String departure;
-    private String arrival;
-    private LocalDate departureDate;
-    private Integer passengerCount;
+    private Integer seats;
+    private ScheduledFlightDto scheduledFlight;
 }

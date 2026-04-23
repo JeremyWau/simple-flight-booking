@@ -1,0 +1,493 @@
+{
+  "info": {
+    "_postman_id": "ec3f1d22-26b9-4927-bf39-ab57b230adc4",
+    "name": "BNP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27953600"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"test\",\r\n    \"password\": \"test\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const textResponse = pm.response.text();\r",
+                  "pm.environment.set(\"bnp_current_token\", textResponse);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"test\",\r\n    \"password\": \"test\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Listing single flight",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/public/flight-search/search?departure=EBBR&arrival=LFMN&date=2026-04-25",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "public",
+                "flight-search",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "departure",
+                  "value": "EBBR"
+                },
+                {
+                  "key": "arrival",
+                  "value": "LFMN",
+                  "type": "text"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-04-25",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Future Flights Available",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/public/flight-search/future-available",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "public",
+                "flight-search",
+                "future-available"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "Book a flight",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function isTokenExpired(token) {\r",
+                  "    if (!token) return true;\r",
+                  "    try {\r",
+                  "        const base64Url = token.split('.')[1];\r",
+                  "        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+                  "        const payload = JSON.parse(atob(base64));\r",
+                  "        \r",
+                  "        const now = Math.floor(Date.now() / 1000);\r",
+                  "        return payload.exp < now;\r",
+                  "    } catch (e) {\r",
+                  "        return true;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "const currentToken = pm.environment.get(\"bnp_current_token\");\r",
+                  "if (!isTokenExpired(currentToken)) return;\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/auth/login',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/json'\r",
+                  "    },\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify({\r",
+                  "            \"username\": \"test\",\r",
+                  "            \"password\": \"test\"\r",
+                  "        })\r",
+                  "    }\r",
+                  "}, function (err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error(err);\r",
+                  "    } else {\r",
+                  "        const textResponse = response.text();\r",
+                  "        pm.environment.set(\"bnp_current_token\", textResponse);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bnp_current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"scheduledFlightId\": 1,\r\n    \"seats\": 99\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/protected/flight-booking/book",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "protected",
+                "flight-booking",
+                "book"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List all bookings",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function isTokenExpired(token) {\r",
+                  "    if (!token) return true;\r",
+                  "    try {\r",
+                  "        const base64Url = token.split('.')[1];\r",
+                  "        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+                  "        const payload = JSON.parse(atob(base64));\r",
+                  "        \r",
+                  "        const now = Math.floor(Date.now() / 1000);\r",
+                  "        return payload.exp < now;\r",
+                  "    } catch (e) {\r",
+                  "        return true;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "const currentToken = pm.environment.get(\"bnp_current_token\");\r",
+                  "if (!isTokenExpired(currentToken)) return;\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/auth/login',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/json'\r",
+                  "    },\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify({\r",
+                  "            \"username\": \"test\",\r",
+                  "            \"password\": \"test\"\r",
+                  "        })\r",
+                  "    }\r",
+                  "}, function (err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error(err);\r",
+                  "    } else {\r",
+                  "        const textResponse = response.text();\r",
+                  "        pm.environment.set(\"bnp_current_token\", textResponse);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bnp_current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/protected/flight-booking/list",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "protected",
+                "flight-booking",
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "View booking",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function isTokenExpired(token) {\r",
+                  "    if (!token) return true;\r",
+                  "    try {\r",
+                  "        const base64Url = token.split('.')[1];\r",
+                  "        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+                  "        const payload = JSON.parse(atob(base64));\r",
+                  "        \r",
+                  "        const now = Math.floor(Date.now() / 1000);\r",
+                  "        return payload.exp < now;\r",
+                  "    } catch (e) {\r",
+                  "        return true;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "const currentToken = pm.environment.get(\"bnp_current_token\");\r",
+                  "if (!isTokenExpired(currentToken)) return;\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/auth/login',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/json'\r",
+                  "    },\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify({\r",
+                  "            \"username\": \"test\",\r",
+                  "            \"password\": \"test\"\r",
+                  "        })\r",
+                  "    }\r",
+                  "}, function (err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error(err);\r",
+                  "    } else {\r",
+                  "        const textResponse = response.text();\r",
+                  "        pm.environment.set(\"bnp_current_token\", textResponse);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bnp_current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/protected/flight-booking/1/view",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "protected",
+                "flight-booking",
+                "1",
+                "view"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete booking",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "function isTokenExpired(token) {\r",
+                  "    if (!token) return true;\r",
+                  "    try {\r",
+                  "        const base64Url = token.split('.')[1];\r",
+                  "        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+                  "        const payload = JSON.parse(atob(base64));\r",
+                  "        \r",
+                  "        const now = Math.floor(Date.now() / 1000);\r",
+                  "        return payload.exp < now;\r",
+                  "    } catch (e) {\r",
+                  "        return true;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "const currentToken = pm.environment.get(\"bnp_current_token\");\r",
+                  "if (!isTokenExpired(currentToken)) return;\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/auth/login',\r",
+                  "    method: 'POST',\r",
+                  "    header: {\r",
+                  "        'Content-Type': 'application/json'\r",
+                  "    },\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify({\r",
+                  "            \"username\": \"test\",\r",
+                  "            \"password\": \"test\"\r",
+                  "        })\r",
+                  "    }\r",
+                  "}, function (err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error(err);\r",
+                  "    } else {\r",
+                  "        const textResponse = response.text();\r",
+                  "        pm.environment.set(\"bnp_current_token\", textResponse);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bnp_current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/protected/flight-booking/1/cancel",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "protected",
+                "flight-booking",
+                "1",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
