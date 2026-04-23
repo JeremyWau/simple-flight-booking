@@ -20,7 +20,7 @@ public class Booking {
     private Long id;
 
     @Column(nullable = false)
-    Integer seats;
+    private Integer seats;
 
     @ManyToOne()
     @JoinColumn(name = "scheduled_flight_id", referencedColumnName = "id", nullable = false)
