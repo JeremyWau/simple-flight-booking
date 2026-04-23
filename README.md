@@ -26,7 +26,7 @@ You will find three folders:
    1. Registration endpoint
    2. Login endpoint, there are already 2 existing users upon startup (test / test) and (test-2 / test)
 2. Search
-   1. The details for a specific scheduled flight (given its departure, arrival and date) - See in "Existing data" below for correct details.
+   1. The details for a specific scheduled flight (given its departure, arrival and date in format YYYY-MM-DD e.g. 2026-04-23) - See in "Existing data" below for dates with flights.
    2. The listing for all the upcoming scheduled flights, with seats available
 3. Booking, this requires authentication, you can either use the default behaviour included (pre request script is authenticate with "test" user) or manually override the token by authenticating with your account and copying the token into the Authorization header.
    1. Booking a scheduled flight by providing a json object with its id and the amount of seats
