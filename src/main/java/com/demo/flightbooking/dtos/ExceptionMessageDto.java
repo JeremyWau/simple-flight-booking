@@ -36,10 +36,10 @@ public class ExceptionMessageDto {
         trace = Stream.of(exception.getStackTrace()).map(elem -> {
             String methodName = ("method " + elem.getMethodName() + "()");
             methodName = methodName.substring(0, Math.min(methodName.length(), 30));
-            return String.format("%-30s: line %04d -> %s"
-                    , methodName
-                    , elem.getLineNumber()
-                    , elem.getFileName());
+            return String.format("%-30s: line %04d -> %s",
+                    methodName,
+                    elem.getLineNumber(),
+                    elem.getFileName());
         }).collect(Collectors.toList()).subList(0, 5);
     }
 

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class BookingExceedsCapacityException extends HttpRuntimeException {
     public BookingExceedsCapacityException(Integer max) {
-        super("Your booking exceeds the maximum remaining capacity of "+max);
+        super("Your booking exceeds the maximum remaining capacity of " + max);
     }
 
     @Override

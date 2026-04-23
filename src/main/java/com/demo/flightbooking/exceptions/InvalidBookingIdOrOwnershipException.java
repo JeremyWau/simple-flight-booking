@@ -9,6 +9,6 @@ public class InvalidBookingIdOrOwnershipException extends HttpRuntimeException {
 
     @Override
     public HttpStatus getHttpStatus() {
-        return HttpStatus.BAD_REQUEST;
+        return HttpStatus.NOT_FOUND;
     }
 }
