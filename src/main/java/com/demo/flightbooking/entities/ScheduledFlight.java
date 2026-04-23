@@ -31,5 +31,5 @@ public class ScheduledFlight {
     private LocalDate departureDate;
 
     @Formula("(SELECT COALESCE(SUM(b.seats), 0) FROM bookings b WHERE b.scheduled_flight_id = id)")
-    private Long passengerCount;
+    private Integer passengerCount;
 }
